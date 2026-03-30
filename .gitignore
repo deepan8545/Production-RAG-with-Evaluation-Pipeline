@@ -1,0 +1,35 @@
+# Environment
+.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Data (don't commit your corpus or BM25 index)
+data/documents/
+data/bm25_index.pkl
+data/docs_cache.pkl
+
+# Eval results (commit golden set, not outputs)
+eval/results/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Models cache (sentence-transformers downloads here)
+.cache/
+models/

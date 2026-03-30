@@ -1,0 +1,61 @@
+name: RAG Evaluation Gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  rag-eval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Create .env from secrets
+        run: |
+          cat > .env << EOF
+          ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}
+          NEO4J_URI=${{ secrets.NEO4J_URI }}
+          NEO4J_USERNAME=neo4j
+          NEO4J_PASSWORD=${{ secrets.NEO4J_PASSWORD }}
+          NEO4J_DATABASE=neo4j
+          EMBEDDING_PROVIDER=huggingface
+          EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
+          CLAUDE_MODEL=claude-3-5-sonnet-20241022
+          MAX_TOKENS=1024
+          TEMPERATURE=0.0
+          RETRIEVER_TOP_K=20
+          RERANKER_TOP_K=5
+          BM25_WEIGHT=0.4
+          VECTOR_WEIGHT=0.6
+          FAITHFULNESS_THRESHOLD=0.85
+          ANSWER_RELEVANCY_THRESHOLD=0.80
+          CONTEXT_PRECISION_THRESHOLD=0.75
+          EOF
+
+      - name: Ingest sample documents
+        run: python -m app.ingestion.ingest --docs-dir data/documents
+
+      - name: Run RAGAS evaluation
+        run: python -m app.evaluation.run_eval --golden-set eval/golden_set/questions.json
+
+      - name: Upload eval results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ragas-results
+          path: eval/results/
+          retention-days: 30

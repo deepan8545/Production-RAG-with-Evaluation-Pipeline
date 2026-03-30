@@ -1,0 +1,37 @@
+[
+  {
+    "question": "What are the three main components of a RAG system?",
+    "ground_truth": "A RAG system consists of three main components: a Document Store (an indexed collection of documents stored in a vector database), a Retriever (which returns the most relevant documents for a query), and a Generator (a language model that conditions its output on the query and retrieved documents).",
+    "source": "data/documents/rag_overview.md"
+  },
+  {
+    "question": "What is the RRF formula used in hybrid retrieval?",
+    "ground_truth": "The RRF score for a document d is: RRF(d) = sum of 1 / (k + rank_i(d)), where k is a constant typically set to 60 and rank_i is the document's rank in result list i. The constant k prevents extremely high scores for top-ranked documents and controls rank decay.",
+    "source": "data/documents/rag_overview.md"
+  },
+  {
+    "question": "Why are cross-encoder rerankers more accurate than bi-encoders?",
+    "ground_truth": "Cross-encoders are significantly more accurate than bi-encoder similarity because the model can attend to both the query and document simultaneously, scoring each (query, document) pair jointly rather than independently. The trade-off is speed: cross-encoders are too slow to run on an entire corpus but fast enough for a candidate set of 20-50 documents.",
+    "source": "data/documents/rag_overview.md"
+  },
+  {
+    "question": "What faithfulness score should production RAG systems target?",
+    "ground_truth": "Production systems should target faithfulness greater than 0.85. Faithfulness measures whether the generated answer is supported by the retrieved context, with a score of 1.0 meaning every claim in the answer can be attributed to the provided documents.",
+    "source": "data/documents/rag_overview.md"
+  },
+  {
+    "question": "What is the typical end-to-end latency budget for a RAG query?",
+    "ground_truth": "A typical production RAG query has a total latency of approximately 1,850ms, broken down as: embedding the query (~50ms), vector + BM25 retrieval (~100ms), cross-encoder reranking of top-20 to top-5 (~200ms), and LLM generation of 500 output tokens (~1,500ms). This is well under a 3 second SLA.",
+    "source": "data/documents/rag_overview.md"
+  },
+  {
+    "question": "What parameters does BM25 use and what do they control?",
+    "ground_truth": "BM25 uses two parameters: k1 controls term saturation, typically set between 1.2 and 2.0, and b controls document length normalization, typically set to 0.75.",
+    "source": "data/documents/rag_overview.md"
+  },
+  {
+    "question": "What is the context window usage per query with reranked top-5 chunks?",
+    "ground_truth": "With reranked top-5 chunks of approximately 500 tokens each, the context window usage is approximately 2,500 tokens per query. This is well within Claude's 200K context limit.",
+    "source": "data/documents/rag_overview.md"
+  }
+]
